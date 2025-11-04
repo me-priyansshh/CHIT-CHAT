@@ -1,0 +1,92 @@
+/* Gradient background */
+.bg-gradient-dark {
+  background: linear-gradient(135deg, #0f0f0f 0%, #1f1f2f 50%, #0a0a0a 100%);
+}
+
+/* Floating symbols */
+.symbol {
+  position: absolute;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.2);
+  user-select: none;
+  pointer-events: none;
+  animation: float 12s infinite linear, flicker 4s infinite alternate;
+}
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-30px) rotate(180deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+@keyframes flicker {
+  0%, 100% { opacity: 0.2; text-shadow: none; }
+  25% { opacity: 0.5; text-shadow: 0 0 10px #00ffff; }
+  50% { opacity: 0.3; text-shadow: 0 0 15px #00ffea; }
+  75% { opacity: 0.4; text-shadow: 0 0 12px #00ffff; }
+}
+
+/* Symbol staggered delays */
+.symbol.delay-0 { animation-delay: 0s; }
+.symbol.delay-200 { animation-delay: 0.2s; }
+.symbol.delay-400 { animation-delay: 0.4s; }
+.symbol.delay-600 { animation-delay: 0.6s; }
+.symbol.delay-800 { animation-delay: 0.8s; }
+.symbol.delay-1000 { animation-delay: 1s; }
+
+/* Glass input fields */
+.input-glass {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 12px;
+  color: #fff;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.input-glass::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+.input-glass:focus {
+  border-color: #00ffff;
+  box-shadow: 0 0 14px #00ffff;
+  background: rgba(255,255,255,0.1);
+}
+
+/* Glass button */
+/* Glassy, shining short button */
+.btn-glass {
+  display: inline-block;
+  min-width: 150px; /* Shorter width */
+  padding: 0.6rem 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #00ffff;
+  border-radius: 999px; /* Pill shape */
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease, transform 0.2s;
+  box-shadow: 0 0 15px rgba(0,255,255,0.2);
+}
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 30px #00ffff, 0 0 60px rgba(0,255,255,0.3);
+  transform: scale(1.05);
+}
+
+
+/* Form glowing shadow */
+.shadow-glow {
+  box-shadow: 0 0 50px rgba(0,255,255,0.35);
+}
+
+/* Slide-in animation */
+@keyframes slide-in {
+  0% { transform: translateY(-50px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.animate-slide-in {
+  animation: slide-in 0.8s ease-out;
+}
