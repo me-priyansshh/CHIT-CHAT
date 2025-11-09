@@ -50,51 +50,53 @@ const Box = () => {
   };
 
   const handleMemberClick = async (member) => {
-  try {
-    if (selectedMembers.includes(member.userName)) {
-      // Unselect → remove from group
-      setSelectedMembers(selectedMembers.filter((u) => u !== member.userName));
+    try {
+      if (selectedMembers.includes(member.userName)) {
+        // Unselect → remove from group
+        setSelectedMembers(
+          selectedMembers.filter((u) => u !== member.userName)
+        );
 
-      const res = await axios.post(
-        `http://localhost:8000/api/group/remove`,
-        {
-          groupId: selectedUser._id,
-          memberId: selectedUser?.members?._id, // use _id from backend
-        },
-        { withCredentials: true }
-      );
+        const res = await axios.post(
+          `http://localhost:8000/api/group/remove`,
+          {
+            groupId: selectedUser._id,
+            memberId: selectedUser?.members?._id, // use _id from backend
+          },
+          { withCredentials: true }
+        );
 
-      // Update selectedUser members with response from backend
-      dispatch(setSelectedUser(res.data.updatedGroup));
+        // Update selectedUser members with response from backend
+        dispatch(setSelectedUser(res.data.updatedGroup));
 
-      toast.success(res.data.message);
-    } else {
-      // Select → add to group
-      setSelectedMembers([...selectedMembers, member.userName]);
+        toast.success(res.data.message);
+      } else {
+        // Select → add to group
+        setSelectedMembers([...selectedMembers, member.userName]);
 
-      const res = await axios.post(
-        `http://localhost:8000/api/group/add`,
-        {
-          groupId: selectedUser._id,
-          memberId: member._id,
-        },
-        { withCredentials: true }
-      );
+        const res = await axios.post(
+          `http://localhost:8000/api/group/add`,
+          {
+            groupId: selectedUser._id,
+            memberId: member._id,
+          },
+          { withCredentials: true }
+        );
 
-      // Update selectedUser members with response from backend
-      dispatch(setSelectedUser(res.data.updatedGroup));
+        // Update selectedUser members with response from backend
+        dispatch(setSelectedUser(res.data.updatedGroup));
 
-      toast.success(res.data.message);
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message);
     }
-  } catch (error) {
-    console.log(error);
-    toast.error(error?.response?.data?.message);
-  }
-};
+  };
 
   const isOnline = onlineUsers?.includes(selectedUser?._id);
 
-    console.log("Selected User:", selectedUser);
+  console.log("Selected User:", selectedUser);
 
   const outerStyle = {
     background:
@@ -115,7 +117,8 @@ const Box = () => {
     zIndex: 0,
     filter: "blur(14px)",
     opacity: 0.9,
-    animation: "rgbShift 5s linear infinite, rgbFlicker 3.2s ease-in-out infinite",
+    animation:
+      "rgbShift 5s linear infinite, rgbFlicker 3.2s ease-in-out infinite",
     pointerEvents: "none",
   };
 
@@ -177,7 +180,8 @@ const Box = () => {
               Welcome to Cosmic Chat
             </h1>
             <p className="text-gray-200 mb-8">
-              Select a contact to start a conversation — your messages will appear here.
+              Select a contact to start a conversation — your messages will
+              appear here.
             </p>
           </div>
         </div>
@@ -186,89 +190,103 @@ const Box = () => {
   }
 
   return (
-    <div className="relative flex flex-col h-full w-full rounded-2xl overflow-hidden" style={outerStyle}>
+    <div
+      className="relative flex flex-col h-full w-full rounded-2xl overflow-hidden"
+      style={outerStyle}
+    >
       <div style={rgbRingStyle} />
-      <div className="relative z-10 h-full flex flex-col" style={{ minHeight: 0 }}>
-       {/* Header */}
-<div className="flex items-center justify-between px-6 py-3" style={headerStyle}>
-  {/* Left: Avatar + Name */}
-  <div className="flex items-center gap-3">
-    {/* Avatar */}
-    <img
-      src={
-        selectedUser?.isGroup
-          ? "https://avatar.iran.liara.run/public/job/operator/male.png"
-          : selectedUser?.profilePic
-      }
-      alt="avatar"
-      className="w-12 h-12 rounded-full object-cover ring-1 ring-white/5"
-    />
-
-    {/* Name and info */}
-    <div>
-      {/* Group or User Name */}
-      <h2
-        className="font-semibold text-lg leading-tight"
-        style={{
-          background:
-            "linear-gradient(90deg, #00ffff, #3f5efb, #ff0077, #ff9f43, #00ffff)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundSize: "300% 100%",
-          animation: "rgbLight 5s linear infinite",
-        }}
+      <div
+        className="relative z-10 h-full flex flex-col"
+        style={{ minHeight: 0 }}
       >
-        {selectedUser?.isGroup ? selectedUser?.name : selectedUser?.userName}
-      </h2>
+        {/* Header */}
+        <div
+          className="flex items-center justify-between px-6 py-3"
+          style={headerStyle}
+        >
+          {/* Left: Avatar + Name */}
+          <div className="flex items-center gap-3">
+            {/* Avatar */}
+            <img
+              src={
+                selectedUser?.isGroup
+                  ? "https://avatar.iran.liara.run/public/job/operator/male.png"
+                  : selectedUser?.profilePic
+              }
+              alt="avatar"
+              className="w-12 h-12 rounded-full object-cover ring-1 ring-white/5"
+            />
 
-      {/* Group members or Online status */}
-      {selectedUser?.isGroup ? (
-        <div className="font-[cursive] text-sm mt-1 text-gray-400">
-          {selectedUser.members.map((member) => member.userName).join(" | ")}
-        </div>
-      ) : (
-        <div className="flex font-[cursive] items-center gap-2 text-sm mt-1">
-          <IoMdRadioButtonOn
-            className={isOnline ? "text-green-400" : "text-gray-500"}
-          />
-          <span className={isOnline ? "text-green-400" : "text-gray-400"}>
-            {isOnline ? "Online" : "Offline"}
-          </span>
-        </div>
-      )}
-    </div>
-  </div>
+            {/* Name and info */}
+            <div>
+              {/* Group or User Name */}
+              <h2
+                className="font-semibold text-lg leading-tight"
+                style={{
+                  background:
+                    "linear-gradient(90deg, #00ffff, #3f5efb, #ff0077, #ff9f43, #00ffff)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundSize: "300% 100%",
+                  animation: "rgbLight 5s linear infinite",
+                }}
+              >
+                {selectedUser?.isGroup
+                  ? selectedUser?.name
+                  : selectedUser?.userName}
+              </h2>
 
-  {/* Right: Delete member icon */}
-  {selectedUser?.isGroup && (
-    <div className="relative">
-      <IoMdTrash
-        className="text-red-400 w-6 h-6 cursor-pointer"
-        onClick={() => setShowDropdown(!showDropdown)}
-      />
-
-      {/* Dropdown */}
-      {showDropdown && (
-        <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded shadow-lg z-10">
-          {selectedUser.members.map((member) => (
-            <div
-              key={member.userName}
-              onClick={() => handleMemberClick(member)}
-              className={`px-4 py-2 cursor-pointer hover:bg-gray-700 ${
-                selectedMembers.includes(member.userName)
-                  ? "bg-gray-700 text-cyan-400 font-semibold"
-                  : "text-gray-300"
-              }`}
-            >
-              {member.userName}
+              {/* Group members or Online status */}
+              {selectedUser?.isGroup ? (
+                <div className="font-[cursive] text-sm mt-1 text-gray-400">
+                  {selectedUser.members
+                    .map((member) => member.userName)
+                    .join(" | ")}
+                </div>
+              ) : (
+                <div className="flex font-[cursive] items-center gap-2 text-sm mt-1">
+                  <IoMdRadioButtonOn
+                    className={isOnline ? "text-green-400" : "text-gray-500"}
+                  />
+                  <span
+                    className={isOnline ? "text-green-400" : "text-gray-400"}
+                  >
+                    {isOnline ? "Online" : "Offline"}
+                  </span>
+                </div>
+              )}
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )}
-</div>
+          </div>
 
+          {/* Right: Delete member icon */}
+          {selectedUser?.isGroup && (
+            <div className="relative">
+              <IoMdTrash
+                className="text-red-400 w-6 h-6 cursor-pointer"
+                onClick={() => setShowDropdown(!showDropdown)}
+              />
+
+              {/* Dropdown */}
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded shadow-lg z-10">
+                  {selectedUser.members.map((member) => (
+                    <div
+                      key={member.userName}
+                      onClick={() => handleMemberClick(member)}
+                      className={`px-4 py-2 cursor-pointer hover:bg-gray-700 ${
+                        selectedMembers.includes(member.userName)
+                          ? "bg-gray-700 text-cyan-400 font-semibold"
+                          : "text-gray-300"
+                      }`}
+                    >
+                      {member.userName}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Messages area (hidden scrollbar) */}
         <div
@@ -286,7 +304,9 @@ const Box = () => {
             ))
           ) : (
             <div className="flex flex-col items-center font-[cursive] justify-center h-full text-center text-gray-400 select-none">
-              <h2 className="text-xl font-[cursive] text-cyan-300 mb-2">No Messages Yet</h2>
+              <h2 className="text-xl font-[cursive] text-cyan-300 mb-2">
+                No Messages Yet
+              </h2>
               <p>
                 Start chatting with{" "}
                 <span className="text-cyan-400">
