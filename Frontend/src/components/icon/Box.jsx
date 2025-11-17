@@ -33,22 +33,39 @@ const Box = () => {
   }, [messages]);
 
   const onSubmitHandler = async (e) => {
-    e.preventDefault();
-    if (!input.trim() || !selectedUser) return;
-    try {
-      axios.defaults.withCredentials = true;
-      const res = await axios.post(
-        `http://localhost:8000/api/message/send/${selectedUser?._id}`,
+  e.preventDefault();
+  if (!input.trim() || !selectedUser) return;
+
+  try {
+    axios.defaults.withCredentials = true;
+
+    let res;
+
+    if (selectedUser.isGroup) {
+      // ⭐ SEND GROUP MESSAGE
+      res = await axios.post(
+        `http://localhost:8000/api/group/send/${selectedUser._id}`,
         { message: input }
       );
-      dispatch(setMessages([...messages, res?.data?.newMessage]));
-      setInput("");
-      sendRef.current?.focus();
-    } catch (error) {
-      console.log(error);
-      toast.error(error?.response?.data?.message);
+       toast.success(res.data.message);
+    } else {
+      // ⭐ SEND PRIVATE MESSAGE
+      res = await axios.post(
+        `http://localhost:8000/api/message/send/${selectedUser._id}`,
+        { message: input }
+      );
     }
-  };
+
+    dispatch(setMessages([...messages, res?.data?.newMessage]));
+    setInput("");
+    sendRef.current?.focus();
+
+  } catch (error) {
+    console.log(error);
+    toast.error(error?.response?.data?.message);
+  }
+};
+
 
   const handleMemberClick = async (member) => {
     try {

@@ -1,53 +1,72 @@
-import {Server} from 'socket.io';
-import http from 'http';
-import express from 'express';
-import colors from 'colors';
-import dotenv from 'dotenv';
+// socket.js
+import { Server } from "socket.io";
+import http from "http";
+import express from "express";
+import colors from "colors";
+import dotenv from "dotenv";
 
 dotenv.config();
 
-//Rest object for express => top of layer of our express server
+// Express app
 const app = express();
 
-//Create Server For http thats like another server which pipelines two users
+// HTTP server
 const server = http.createServer(app);
 
-//this is socket and it will also handle cors policy
+// Socket.IO server
 const io = new Server(server, {
-        cors: {
-        origin: [process.env.FRONTEND_URL],
-        methods: ["GET", "POST"],
-        credentials: true,
-    }
+  cors: {
+    origin: [process.env.FRONTEND_URL],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
 
-    export const getSocketRecieverId = (recieverId) => {
-        return userSocketMap[recieverId];
+// Map userId → socketId
+const userSocketMap = {};
+
+// Helper function to get receiver's socket id
+export const getSocketRecieverId = (recieverId) => {
+  return userSocketMap[recieverId];
+};
+
+// SOCKET CONNECTION
+io.on("connection", (socket) => {
+  console.log(`Connected To Socket: ${socket.id}`.cyan);
+
+  const userId = socket.handshake.query.userId;
+
+  // Store mapping
+  if (userId !== undefined && userId !== null) {
+    userSocketMap[userId] = socket.id;
+  }
+
+  // Broadcast online users list
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+  // JOIN ALL USER GROUPS
+  socket.on("joinUserGroups", (groupIds) => {
+    if (Array.isArray(groupIds)) {
+      groupIds.forEach((groupId) => {
+        socket.join(groupId);
+      });
     }
+  });
 
-    const userSocketMap = {}; // {userId => socketId}
+  // LEAVE SPECIFIC GROUP
+  socket.on("leaveGroup", (groupId) => {
+    socket.leave(groupId);
+  });
 
-//Now as socket => io so we will handle socket requests via io
-io.on('connection', (socket) => {
+  // DISCONNECT
+  socket.on("disconnect", () => {
+    console.log(`Disconnected From Socket: ${socket.id}`.yellow);
 
-    console.log(`Connected To Socket: ${socket.id}`.rainbow);
-    
-    const userId = socket.handshake.query.userId;
+    delete userSocketMap[userId];
 
-    if(userId !== undefined && userId !== null){
-        userSocketMap[userId] = socket.id;
-    }
-
-    io.emit('getOnlineUsers', Object.keys(userSocketMap));
-
-    socket.on('disconnect', () => {
-         console.log(`Disconnected From Socket: ${socket.id}`.rainbow);
-         delete userSocketMap[userId];
-         io.emit('getOnlineUsers', Object.keys(userSocketMap));
-    });
-
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  });
 });
 
-export {io, server, app};
-
-
+// Export everything
+export { io, server, app };

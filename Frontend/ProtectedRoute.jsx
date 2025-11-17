@@ -9,10 +9,9 @@ const ProtectedRoute = ({ children }) => {
     const {authUser} = useSelector((store) => store.user);
 
     if (!authUser) {
-        toast.error('Please login to access this page');
-        return <Navigate to="/login" replace />;
+      toast.error('login 💀💀')
+      return <Navigate to="/login" replace />;
     };
-
   return children;
 };
 

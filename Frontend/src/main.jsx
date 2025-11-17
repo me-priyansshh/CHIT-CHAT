@@ -9,12 +9,10 @@ import { PersistGate } from "redux-persist/integration/react";
 import MyToaster from "../toaster.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <App />
         <MyToaster />
       </PersistGate>
     </Provider>
-  </StrictMode>
 );

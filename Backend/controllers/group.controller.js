@@ -1,4 +1,6 @@
 import Group from "../models/groupModel.js";
+import Message from "../models/messageModel.js";
+import { io } from "../Socket/socket.js";
 
 export const createGroupController = async (req, res) => {
   try {
@@ -213,6 +215,74 @@ export const getUserGroupsController = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
+
+//Send Group Message
+export const sendGroupMessageController = async (req, res) => {
+  try {
+    console.log("---- GROUP MESSAGE DEBUG ----");
+
+    const senderId = req.userId;
+    const groupId = req.params.groupId;
+    const { message } = req.body;
+
+    console.log("senderId:", senderId);
+    console.log("groupId:", groupId);
+    console.log("message body:", message);
+
+    if (!message) {
+      console.log("❌ No message text");
+      return res.status(400).json({ message: "Message text required" });
+    }
+
+    const group = await Group.findById(groupId);
+    console.log("group found:", group ? true : false);
+
+    if (!group) {
+      console.log("❌ Group not found");
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    // Create message
+    const newMessage = await Message.create({
+      senderId,
+      groupId,
+      message,
+    });
+
+    console.log("message created:", newMessage._id);
+
+    // Push to group
+    if (!Array.isArray(group.latestMessages)) {
+      console.log("⚠ latestMessages not array — resetting");
+      group.latestMessages = [];
+    }
+
+    group.latestMessages.push(newMessage._id);
+    await group.save();
+    console.log("group saved successfully");
+
+    // Emit
+    console.log("emitting socket event...");
+    io.to(groupId).emit("receiveGroupMessage", {
+      groupId,
+      newMessage,
+    });
+
+    console.log("socket emit success");
+
+    return res.status(200).json({
+      message: "Group message sent",
+      newMessage,
+    });
+
+  } catch (error) {
+    console.log("❌ FINAL ERROR:", error);
+    res.status(500).json({
+      message: "Error sending group message",
       error: error.message,
     });
   }

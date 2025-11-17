@@ -18,6 +18,10 @@ const groupSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  latestMessages: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Message',
+  }],
 },{timestamps:true});
 
 const Group = mongoose.model('Group', groupSchema);
