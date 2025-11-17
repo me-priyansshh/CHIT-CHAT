@@ -33,5 +33,5 @@ app.use('/api/group', groupRouter);
 const port = process.env.PORT || 8000;
 server.listen(port, () => {
   connectDB();
-  console.log(`🚀 Server and Socket running at http://localhost:${port}`.rainbow);
+  console.log(`🚀 Server and Socket running at http://localhost:${port}`.rainbow.bold);
 });

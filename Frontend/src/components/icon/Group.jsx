@@ -34,12 +34,13 @@ const GroupModal = ({ isOpen, setIsOpen, onCreateGroup }) => {
          });
 
         toast.success("Group created successfully!");
+        const updatedGroups = [...groups, res.data.group];
+        dispatch(setgroups(updatedGroups));
+        
         setGroupName("");
         setSelectedMembers([]);
         setIsOpen(false);
         console.log(res.data);
-        dispatch(setgroups([...groups, res.data]));
-
      } catch (error) {
         console.log(error);
         toast.error(res.error.data.message);
@@ -66,7 +67,7 @@ const GroupModal = ({ isOpen, setIsOpen, onCreateGroup }) => {
       }}
     >
       {/* Close Button */}
-      <button
+      <button 
         type="button"
         className="self-end text-2xl font-bold hover:text-pink-300 z-20"
         onClick={() => setIsOpen(false)}

@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 const UserList = () => {
+
   useGetUsers();
   useGetGroups();
 
@@ -39,7 +40,6 @@ const UserList = () => {
       });
 
       toast.success(res.data.message);
-      
       if (res.data.group) {
         // remove deleted group from redux
         const updatedGroups = groups.filter((g) => g._id !== groupId);

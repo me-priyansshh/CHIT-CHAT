@@ -10,6 +10,7 @@ import { setSelectedUser } from "../../Redux/userSlice";
 import useGetRealTimeMessage from "../../Hooks/useRealTimeMessage";
 import { IoMdRadioButtonOn } from "react-icons/io";
 import { IoMdTrash } from "react-icons/io";
+import { setgroups } from "../../Redux/groupsSlice";
 
 const Box = () => {
   const { selectedUser, authUser } = useSelector((store) => store.user);
@@ -51,43 +52,25 @@ const Box = () => {
 
   const handleMemberClick = async (member) => {
     try {
-      if (selectedMembers.includes(member.userName)) {
-        // Unselect → remove from group
-        setSelectedMembers(
-          selectedMembers.filter((u) => u !== member.userName)
-        );
+      const res = await axios.post(
+        `http://localhost:8000/api/group/remove`,
+        {
+          groupId: selectedUser._id,
+          memberId: member._id,
+        },
+        { withCredentials: true }
+      );
 
-        const res = await axios.post(
-          `http://localhost:8000/api/group/remove`,
-          {
-            groupId: selectedUser._id,
-            memberId: selectedUser?.members?._id, // use _id from backend
-          },
-          { withCredentials: true }
-        );
-
-        // Update selectedUser members with response from backend
-        dispatch(setSelectedUser(res.data.updatedGroup));
-
-        toast.success(res.data.message);
-      } else {
-        // Select → add to group
-        setSelectedMembers([...selectedMembers, member.userName]);
-
-        const res = await axios.post(
-          `http://localhost:8000/api/group/add`,
-          {
-            groupId: selectedUser._id,
-            memberId: member._id,
-          },
-          { withCredentials: true }
-        );
-
-        // Update selectedUser members with response from backend
-        dispatch(setSelectedUser(res.data.updatedGroup));
-
-        toast.success(res.data.message);
-      }
+      dispatch(setSelectedUser(res.data.updatedGroup));
+      toast.success(res.data.message);
+      dispatch(
+        setgroups(
+          groups.map((g) =>
+            g._id === res.data.updatedGroup._id ? res.data.updatedGroup : g
+          )
+        )
+      );
+      setShowDropdown(false);
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message);
@@ -240,7 +223,7 @@ const Box = () => {
               {selectedUser?.isGroup ? (
                 <div className="font-[cursive] text-sm mt-1 text-gray-400">
                   {selectedUser.members
-                    .map((member) => member.userName)
+                    ?.map((member) => member.userName)
                     .join(" | ")}
                 </div>
               ) : (

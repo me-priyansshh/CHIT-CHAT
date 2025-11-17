@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import colors from 'colors';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import redisClient from "../config/redis.js";
 
 
 //To Create A New User
@@ -136,13 +137,24 @@ export const getAllUsersController = async (req, res) => {
         
         const loggedIn = req.userId;
 
+        const cache = `users-${loggedIn}`;
+
+        const cachedUsers = await redisClient.get(cache);
+        if(cachedUsers){
+            return res.status(200).json({
+                message: "All users fetched successfully",
+                otherUsers: JSON.parse(cachedUsers),
+            });
+        };
+
         const otherUsers = await User.find({_id: {$ne: loggedIn}}).select("-password");
+
+        await redisClient.set(cache, JSON.stringify(otherUsers));
 
         return res.status(200).json({
             message: "All users fetched successfully",
             otherUsers,
         });
-
 
     } catch (error) {
         console.log(error);

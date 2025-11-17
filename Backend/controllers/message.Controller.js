@@ -1,3 +1,4 @@
+import redisClient from "../config/redis.js";
 import Chat from "../models/chatModel.js";
 import Message from "../models/messageModel.js";
 import { getSocketRecieverId, io } from "../Socket/socket.js";

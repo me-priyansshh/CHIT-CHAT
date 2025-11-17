@@ -8,7 +8,7 @@ const groupRouter = express.Router();
 groupRouter.post('/create', isAuthenticated, createGroupController);
 
 //REMOVE MEMBER FROM GROUP
-groupRouter.patch('/remove', isAuthenticated, removeMemberController);
+groupRouter.post('/remove', isAuthenticated, removeMemberController);
 
 //Add Members to Group
 groupRouter.patch('/add', isAuthenticated, addMemberController);

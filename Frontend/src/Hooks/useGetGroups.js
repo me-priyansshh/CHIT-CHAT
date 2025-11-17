@@ -19,7 +19,7 @@ const useGetGroups = () => {
             }
          }
          fetchUsers();
-     },[]);
+     },[dispatch]);
 
 }
 

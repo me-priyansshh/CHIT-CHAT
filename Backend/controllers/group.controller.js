@@ -1,91 +1,32 @@
 import Group from "../models/groupModel.js";
 
 export const createGroupController = async (req, res) => {
-    try {
-        
-        const { name, members } = req.body;
-        const groupAdmin = req.userId;
-
-        if(!name || members.length === 0){
-            return res.status(400).json({
-                message: "All fields are required",
-            })
-        };
-
-        if(!groupAdmin){
-            return res.status(400).json({
-                message: "You must be logged in to create a group",
-            })
-        };
-
-        const newGroup = await Group.create({
-            name,
-            members: [groupAdmin, ...members],
-            groupAdmin,
-        });
-
-        return res.status(201).json({
-            message: "Group created successfully",
-            newGroup,
-        })
-
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            message: "Internal Server Error",
-            error: error.message,
-        })
-    }
-};
-
-//Remove Member from Group
-export const removeMemberController = async (req, res) => {
   try {
-    const { groupId, memberId } = req.body;
 
-    // Validate inputs
-    if (!groupId || !memberId) {
+    const { name, members } = req.body;
+    const groupAdmin = req.userId;
+
+    if (!name || members.length === 0) {
       return res.status(400).json({
-        message: "Group ID and Member ID are required",
+        message: "All fields are required",
       });
     }
 
-    // Find group
-    const group = await Group.findById(groupId);
-    if (!group) {
-      return res.status(404).json({
-        message: "Group not found",
+    if (!groupAdmin) {
+      return res.status(400).json({
+        message: "You must be logged in to create a group",
       });
     }
 
-    // Only admin can remove members
-    if (group.groupAdmin.toString() !== req.userId) {
-      return res.status(403).json({
-        message: "Only group admin can remove members",
-      });
-    }
+    const group = await Group.create({
+      name,
+      members: [groupAdmin, ...members],
+      groupAdmin,
+    });
 
-    // Check if member exists in the group
-    if (!group.members.some(m => m.toString() === memberId)) {
-      return res.status(404).json({
-        message: "Member not found in group",
-      });
-    }
-
-    // Remove the member
-    group.members = group.members.filter(
-      member => member.toString() !== memberId
-    );
-    await group.save();
-
-    // Populate user details for better response
-    const updatedGroup = await Group.findById(groupId)
-      .populate("members", "fullName userName profilePic gender _id")
-      .populate("groupAdmin", "fullName userName profilePic gender");
-
-    return res.status(200).json({
-      message: "Member removed successfully",
-      updatedGroup,
+    return res.status(201).json({
+      message: "Group created successfully",
+      group,
     });
   } catch (error) {
     console.log(error);
@@ -95,6 +36,67 @@ export const removeMemberController = async (req, res) => {
     });
   }
 };
+
+//Remove Member from Group
+export const removeMemberController = async (req, res) => {
+  try {
+    const { groupId, memberId } = req.body;
+
+    if (!groupId || !memberId) {
+      return res.status(400).json({
+        message: "Group ID and Member ID are required",
+      });
+    }
+
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).json({
+        message: "Group not found",
+      });
+    }
+
+    if (group.groupAdmin.toString() !== req.userId) {
+      return res.status(403).json({
+        message: "Only group admin can remove members",
+      });
+    }
+
+    // Check if member exists
+    const exists = group.members.some(
+      (m) => m.toString() === memberId.toString()
+    );
+
+    if (!exists) {
+      return res.status(404).json({
+        message: "Member not found in group",
+      });
+    }
+
+    // Remove member
+    group.members = group.members.filter(
+      (m) => m.toString() !== memberId.toString()
+    );
+
+    await group.save();
+
+    const updatedGroup = await Group.findById(groupId)
+      .populate("members", "fullName userName profilePic gender _id")
+      .populate("groupAdmin", "fullName userName profilePic gender");
+
+    return res.status(200).json({
+      message: "Member removed successfully",
+      updatedGroup,
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
+
 
 //Add members to Group
 export const addMemberController = async (req, res) => {
@@ -124,11 +126,11 @@ export const addMemberController = async (req, res) => {
     }
 
     // Check if member already exists in the group
-    if (group.members.some(m => m.toString() === memberId)) {
+    if (group.members.some((m) => m.toString() === memberId)) {
       return res.status(400).json({
         message: "Member already in group",
       });
-    };
+    }
 
     // Remove the member
     group.members.push(memberId);
@@ -144,7 +146,6 @@ export const addMemberController = async (req, res) => {
       message: "Member Added successfully",
       updatedGroup,
     });
-
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -191,33 +192,28 @@ export const deleteGroupController = async (req, res) => {
 
 //Get Groups of User
 export const getUserGroupsController = async (req, res) => {
-    try {
+  try {
+    const userId = req.userId;
 
-        const userId = req.userId;
-
-        if(!userId){
-            return res.status(400).json({
-                message: "User ID is required",
-            })
-        };
-
-        const groups = await Group.find({ members: userId })
-          .populate("members", "fullName userName profilePic gender _id")
-          .populate("groupAdmin", "fullName userName profilePic gender");
-          
-
-        return res.status(200).json({
-            message: "User groups fetched successfully",
-            groups,
-        });
-
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            message: "Internal Server Error",
-            error: error.message,
-        })
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required",
+      });
     }
+
+    const groups = await Group.find({ members: userId })
+      .populate("members", "fullName userName profilePic gender _id")
+      .populate("groupAdmin", "fullName userName profilePic gender");
+
+    return res.status(200).json({
+      message: "User groups fetched successfully",
+      groups,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
 };
-
-
