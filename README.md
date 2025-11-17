@@ -38,5 +38,6 @@ To run CHIT-CHAT locally:
 
 1. **Clone the repository**  
    ```bash
-   git clone https://github.com/yourusername/CHIT-CHAT.git  
+   git clone https://github.com/me-priyansshh/CHIT-CHAT.git  
    cd CHIT-CHAT  
+ 
