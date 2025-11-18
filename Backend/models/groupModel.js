@@ -18,7 +18,7 @@ const groupSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  latestMessages: [{
+  latestMessage: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message',
   }],

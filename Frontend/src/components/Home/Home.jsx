@@ -36,7 +36,7 @@ export default function Home() {
       {/* Main content */}
       <div className="z-10 max-w-2xl p-4 text-white">
         <h1 className="text-5xl md:text-6xl font-extrabold drop-shadow-lg mb-4">
-          CHIT-CHAT
+          Orion Chat 🤖
         </h1>
         <p className="text-gray-300 text-lg md:text-xl mb-8 leading-relaxed">
           Dive into conversations that spark creativity, celebrate knowledge, and

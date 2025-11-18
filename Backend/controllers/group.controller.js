@@ -4,7 +4,6 @@ import { io } from "../Socket/socket.js";
 
 export const createGroupController = async (req, res) => {
   try {
-
     const { name, members } = req.body;
     const groupAdmin = req.userId;
 
@@ -89,7 +88,6 @@ export const removeMemberController = async (req, res) => {
       message: "Member removed successfully",
       updatedGroup,
     });
-
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -98,7 +96,6 @@ export const removeMemberController = async (req, res) => {
     });
   }
 };
-
 
 //Add members to Group
 export const addMemberController = async (req, res) => {
@@ -278,7 +275,6 @@ export const sendGroupMessageController = async (req, res) => {
       message: "Group message sent",
       newMessage,
     });
-
   } catch (error) {
     console.log("❌ FINAL ERROR:", error);
     res.status(500).json({

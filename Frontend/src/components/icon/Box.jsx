@@ -288,6 +288,8 @@ const Box = () => {
           )}
         </div>
 
+        
+
         {/* Messages area (hidden scrollbar) */}
         <div
           className="flex-1 px-4 py-3"

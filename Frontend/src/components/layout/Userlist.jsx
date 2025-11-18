@@ -11,7 +11,6 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 const UserList = () => {
-
   useGetUsers();
   useGetGroups();
 
@@ -53,6 +52,24 @@ const UserList = () => {
 
   return (
     <div className="flex flex-col gap-2">
+      <div
+  className="flex items-center gap-3 p-4 rounded-xl bg-black-900 font-bold text-lg shadow-md
+             cursor-pointer  duration-300 hover:bg-gray-900 text-blue-400"
+>
+  {/* Robot Avatar */}
+  <img
+    src="https://img.freepik.com/free-vector/friendly-robot-floating-space_1308-161934.jpg?semt=ais_hybrid&w=740&q=80"
+    alt="Robot Avatar"
+    className="w-10 h-10 rounded-full border border-white/10 object-cover"
+  />
+
+  {/* Text */}
+  <span className="font-mono tracking-wider text-blue-400 text-xl">
+    Orion AI
+  </span>
+</div>
+
+
       {/* Groups on top */}
       {groups?.map((group) => (
         <div key={group._id} className="relative">
