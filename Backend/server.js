@@ -14,7 +14,8 @@ dotenv.config();
 // ✅ Middlewares must be added to the same app that socket uses
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
 );

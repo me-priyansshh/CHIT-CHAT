@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import colors from 'colors';
 
 function connectDB() {
-    mongoose.connect(process.env.MONGO_URI_WHATSAPP)
+    mongoose.connect(process.env.MONGO_URI)
     .then(() => {
        console.log("Connected to MongoDB".rainbow.bold);
     })
