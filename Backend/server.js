@@ -1,37 +1,49 @@
-import colors from 'colors';
-import connectDB from './config/db.js';
-import morgan from 'morgan';
-import userRouter from './routes/user.route.js';
-import cookieParser from 'cookie-parser';
-import messageRouter from './routes/message.route.js';
-import cors from 'cors';
-import { server, app } from './Socket/socket.js'; // <-- import same app here
-import express from 'express';
-import dotenv from 'dotenv';
-import groupRouter from './routes/group.route.js';
+// server.js
+import colors from "colors";
+import dotenv from "dotenv";
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import express from "express";
+import connectDB from "./config/db.js";
+
+// Routes
+import userRouter from "./routes/user.route.js";
+import messageRouter from "./routes/message.route.js";
+import groupRouter from "./routes/group.route.js";
+
+// Import app & server from socket.js
+import { server, app } from "./Socket/socket.js";
+
 dotenv.config();
 
-// ✅ Middlewares must be added to the same app that socket uses
-app.use(cors({
-  origin: ["http://localhost:5173", "https://chit-chat-1-b2yb.onrender.com"],
-  credentials: true,
-}));
+// ---------------- MIDDLEWARES ----------------
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://chit-chat-1-b2yb.onrender.com",
+    ],
+    credentials: true,
+  })
+);
 
-app.set('trust proxy', 1);
-
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
-// ✅ Routes (now registered on the same app)
-app.use('/api/user', userRouter);
-app.use('/api/message', messageRouter);
-app.use('/api/group', groupRouter);
+// ---------------- API ROUTES ----------------
+app.use("/api/user", userRouter);
+app.use("/api/message", messageRouter);
+app.use("/api/group", groupRouter);
 
-// ✅ Port and server startup
-const port = process.env.PORT || 8000;
-server.listen(port, () => {
-  connectDB();
-  console.log(`🚀 Server and Socket running at http://localhost:${port}`.rainbow.bold);
+// ---------------- START SERVER ----------------
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, async () => {
+  await connectDB();
+  console.log(
+    `🚀 Server + Socket running at http://localhost:${PORT}`.rainbow.bold
+  );
 });
