@@ -16,7 +16,7 @@ const server = http.createServer(app);
 // Socket.IO server
 const io = new Server(server, {
   cors: {
-    origin: [process.env.FRONTEND_URL],
+    origin: [process.env.FRONTEND_URL, "https://chit-chat-1-b2yb.onrender.com"],
     methods: ["GET", "POST"],
     credentials: true,
   },

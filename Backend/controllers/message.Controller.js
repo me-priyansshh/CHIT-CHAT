@@ -66,7 +66,7 @@ export const getMessageController = async (req, res) => {
         const conversation = await Chat.findOne({participants: {$all: [senderId, recieverId]}})
         .populate('latestMessage');
 
-        return res.status(200).json( conversation.latestMessage, );
+        return res.status(200).json( conversation.latestMessage );
 
     } catch (error) {
         console.log(error);

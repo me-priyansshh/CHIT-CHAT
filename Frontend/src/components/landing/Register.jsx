@@ -28,7 +28,7 @@ export default function Register() {
 
     //API call here by axios
     try {
-       const res = await axios.post(`http://localhost:8000/api/user/register`, user);
+       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/register`, user);
        toast.success(res.data.message);
        navigate("/login");
     } catch (error) {

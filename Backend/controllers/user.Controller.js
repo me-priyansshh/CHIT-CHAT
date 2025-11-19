@@ -86,7 +86,6 @@ export const loginController = async (req, res) => {
             })
         }
 
-
         //check if password is correct
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
@@ -100,7 +99,7 @@ export const loginController = async (req, res) => {
 
         // console.log(`so the following token is ${token}`.yellow);
 
-       return res.status(200).cookie('token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24, sameSite: 'strict', secure: true}).json({
+       return res.status(200).cookie('token', token, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24, sameSite: 'none', secure: true}).json({
         message: "User logged in successfully",
         user,
        });
@@ -137,19 +136,7 @@ export const getAllUsersController = async (req, res) => {
         
         const loggedIn = req.userId;
 
-        const cache = `users-${loggedIn}`;
-
-        const cachedUsers = await redisClient.get(cache);
-        if(cachedUsers){
-            return res.status(200).json({
-                message: "All users fetched successfully",
-                otherUsers: JSON.parse(cachedUsers),
-            });
-        };
-
         const otherUsers = await User.find({_id: {$ne: loggedIn}}).select("-password");
-
-        await redisClient.set(cache, JSON.stringify(otherUsers));
 
         return res.status(200).json({
             message: "All users fetched successfully",

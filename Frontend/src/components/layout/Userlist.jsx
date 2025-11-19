@@ -33,7 +33,7 @@ const UserList = () => {
 
   const handleDeleteGroup = async (groupId) => {
     try {
-      const res = await axios.delete("http://localhost:8000/api/group/delete", {
+      const res = await axios.delete(`${import.meta.env.VITE_API_URL}/api/group/delete`, {
         data: { groupId },
         withCredentials: true,
       });

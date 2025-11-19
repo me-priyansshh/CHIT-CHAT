@@ -44,14 +44,14 @@ const Box = () => {
     if (selectedUser.isGroup) {
       // ⭐ SEND GROUP MESSAGE
       res = await axios.post(
-        `http://localhost:8000/api/group/send/${selectedUser._id}`,
+        `${import.meta.env.VITE_API_URL}/api/group/send/${selectedUser._id}`,
         { message: input }
       );
        toast.success(res.data.message);
     } else {
       // ⭐ SEND PRIVATE MESSAGE
       res = await axios.post(
-        `http://localhost:8000/api/message/send/${selectedUser._id}`,
+        `${import.meta.env.VITE_API_URL}/api/message/send/${selectedUser._id}`,
         { message: input }
       );
     }
@@ -70,7 +70,7 @@ const Box = () => {
   const handleMemberClick = async (member) => {
     try {
       const res = await axios.post(
-        `http://localhost:8000/api/group/remove`,
+        `${import.meta.env.VITE_API_URL}/api/group/remove`,
         {
           groupId: selectedUser._id,
           memberId: member._id,

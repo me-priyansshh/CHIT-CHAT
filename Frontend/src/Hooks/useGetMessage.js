@@ -17,7 +17,9 @@ const useGetMessage = () => {
 
       try {
         axios.defaults.withCredentials = true;
-        const res = await axios.get(`http://localhost:8000/api/message/get/${selectedUser._id}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/message/get/${selectedUser._id}`,{
+          withCredentials: true,
+        });
         console.log("Fetched messages:", res.data);
         dispatch(setMessages(res.data));
       } catch (error) {
