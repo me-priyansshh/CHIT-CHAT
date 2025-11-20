@@ -1,4 +1,3 @@
-// Socket/socket.js
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
@@ -29,7 +28,7 @@ const userSocketMap = {};
 // Helper to get receiver socket id
 export const getSocketRecieverId = (receiverId) => userSocketMap[receiverId];
 
-// ---------------- SOCKET EVENTS ----------------
+// ---------------- SOCKET EVENTS ----------------//
 io.on("connection", (socket) => {
   console.log(`Connected To Socket: ${socket.id}`.cyan);
 
