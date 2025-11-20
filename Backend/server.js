@@ -21,7 +21,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://chit-chat-1-b2yb.onrender.com",
+      "https://orion-chat-oeob.onrender.com",
     ],
     credentials: true,
   })

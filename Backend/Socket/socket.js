@@ -16,7 +16,7 @@ const io = new Server(server, {
   cors: {
     origin: [
       process.env.FRONTEND_URL,
-      "https://chit-chat-1-b2yb.onrender.com"
+      "https://orion-chat-oeob.onrender.com"
     ],
     methods: ["GET", "POST"],
     credentials: true,
