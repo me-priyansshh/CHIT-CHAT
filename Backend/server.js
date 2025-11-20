@@ -1,4 +1,3 @@
-// server.js
 import colors from "colors";
 import dotenv from "dotenv";
 import morgan from "morgan";
@@ -7,17 +6,17 @@ import cors from "cors";
 import express from "express";
 import connectDB from "./config/db.js";
 
-// Routes
+// Routes //
 import userRouter from "./routes/user.route.js";
 import messageRouter from "./routes/message.route.js";
 import groupRouter from "./routes/group.route.js";
 
-// Import app & server from socket.js
+// Import app & server from socket.js //
 import { server, app } from "./Socket/socket.js";
 
 dotenv.config();
 
-// ---------------- MIDDLEWARES ----------------
+// ---------------- MIDDLEWARES ----------------//
 app.use(
   cors({
     origin: [
@@ -39,11 +38,11 @@ app.use("/api/user", userRouter);
 app.use("/api/message", messageRouter);
 app.use("/api/group", groupRouter);
 
-// ---------------- START SERVER ----------------
+
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, async () => {
   await connectDB();
   console.log(
-    `🚀 Server + Socket running at http://localhost:${PORT}`.rainbow.bold
+    `🚀 Server + Socket running at port ${PORT}`.rainbow.bold
   );
 });

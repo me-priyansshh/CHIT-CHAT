@@ -4,18 +4,20 @@ import http from "http";
 import express from "express";
 import colors from "colors";
 import dotenv from "dotenv";
-import path from "path";
 
 dotenv.config();
 
-// ---------------- EXPRESS APP & HTTP SERVER ----------------
+
 const app = express();
 const server = http.createServer(app);
 
-// ---------------- SOCKET.IO ----------------
+
 const io = new Server(server, {
   cors: {
-    origin: [process.env.FRONTEND_URL, "https://chit-chat-1-b2yb.onrender.com"],
+    origin: [
+      process.env.FRONTEND_URL,
+      "https://chit-chat-1-b2yb.onrender.com"
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -25,7 +27,7 @@ const io = new Server(server, {
 const userSocketMap = {};
 
 // Helper to get receiver socket id
-export const getSocketRecieverId = (recieverId) => userSocketMap[recieverId];
+export const getSocketRecieverId = (receiverId) => userSocketMap[receiverId];
 
 // ---------------- SOCKET EVENTS ----------------
 io.on("connection", (socket) => {
@@ -56,12 +58,4 @@ io.on("connection", (socket) => {
   });
 });
 
-// ---------------- SERVE FRONTEND ----------------
-const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, "dist")));
-app.get(/(.*)/, (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
-});
-
-// ---------------- EXPORT ----------------
 export { io, server, app };
