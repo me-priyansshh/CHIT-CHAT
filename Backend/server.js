@@ -20,7 +20,7 @@ dotenv.config();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      process.env.FRONTEND_URL,
       "https://orion-chat-oeob.onrender.com",
     ],
     credentials: true,
