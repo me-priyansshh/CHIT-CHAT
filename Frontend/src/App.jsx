@@ -12,6 +12,7 @@ import io from "socket.io-client";
 import { setSocket } from "./Redux/socketSlice";
 import { setOnlineUsers, setSelectedUser } from "./Redux/userSlice";
 import ProtectedRoute from "../ProtectedRoute";
+import AI from "./components/Pages/AI";
 
 function App() {
   const { authUser } = useSelector((store) => store.user);
@@ -42,11 +43,6 @@ function App() {
     socket.emit("joinUserGroups", groupIds);
   }
 
-  // RECEIVE GROUP MESSAGES
-  socket.on("receiveGroupMessage", (data) => {
-    dispatch(addGroupMessage(data)); // <-- You must create this reducer
-  });
-
   return () => {
     socket.disconnect();
     dispatch(setSocket(null));
@@ -69,6 +65,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/ai" element={<AI />} />
         </Routes>
       </BrowserRouter>
     </>

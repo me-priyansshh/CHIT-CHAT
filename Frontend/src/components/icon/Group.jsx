@@ -36,7 +36,6 @@ const GroupModal = ({ isOpen, setIsOpen, onCreateGroup }) => {
         toast.success("Group created successfully!");
         const updatedGroups = [...groups, res.data.group];
         dispatch(setgroups(updatedGroups));
-        
         setGroupName("");
         setSelectedMembers([]);
         setIsOpen(false);

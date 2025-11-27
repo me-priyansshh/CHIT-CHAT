@@ -11,6 +11,8 @@ import useGetRealTimeMessage from "../../Hooks/useRealTimeMessage";
 import { IoMdRadioButtonOn } from "react-icons/io";
 import { IoMdTrash } from "react-icons/io";
 import { setgroups } from "../../Redux/groupsSlice";
+import useGetGroupRealTimeMessage from "../../Hooks/useGetGroupMessage";
+import useGetGroupMessages from "../../Hooks/useGetGroupRead";
 
 const Box = () => {
   const { selectedUser, authUser } = useSelector((store) => store.user);
@@ -22,8 +24,11 @@ const Box = () => {
   const sendRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  useGetMessage();
-  useGetRealTimeMessage();
+  useGetMessage(selectedUser?._id);
+  useGetRealTimeMessage(); 
+  useGetGroupRealTimeMessage();
+  useGetGroupMessages();
+
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState([]);
@@ -33,39 +38,37 @@ const Box = () => {
   }, [messages]);
 
   const onSubmitHandler = async (e) => {
-  e.preventDefault();
-  if (!input.trim() || !selectedUser) return;
+    e.preventDefault();
+    if (!input.trim() || !selectedUser) return;
 
-  try {
-    axios.defaults.withCredentials = true;
+    try {
+      axios.defaults.withCredentials = true;
 
-    let res;
+      let res;
 
-    if (selectedUser.isGroup) {
-      // ⭐ SEND GROUP MESSAGE
-      res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/group/send/${selectedUser._id}`,
-        { message: input }
-      );
-       toast.success(res.data.message);
-    } else {
-      // ⭐ SEND PRIVATE MESSAGE
-      res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/message/send/${selectedUser._id}`,
-        { message: input }
-      );
+      if (selectedUser.isGroup) {
+        res = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/group/send/${selectedUser._id}`,
+          { message: input }
+        );
+        toast.success(res.data.message);
+      } else {
+        res = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/message/send/${
+            selectedUser._id
+          }`,
+          { message: input }
+        );
+      }
+
+      dispatch(setMessages([...messages, res?.data?.newMessage]));
+      setInput("");
+      sendRef.current?.focus();
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message);
     }
-
-    dispatch(setMessages([...messages, res?.data?.newMessage]));
-    setInput("");
-    sendRef.current?.focus();
-
-  } catch (error) {
-    console.log(error);
-    toast.error(error?.response?.data?.message);
-  }
-};
-
+  };
 
   const handleMemberClick = async (member) => {
     try {
@@ -95,8 +98,6 @@ const Box = () => {
   };
 
   const isOnline = onlineUsers?.includes(selectedUser?._id);
-
-  console.log("Selected User:", selectedUser);
 
   const outerStyle = {
     background:
@@ -287,8 +288,6 @@ const Box = () => {
             </div>
           )}
         </div>
-
-        
 
         {/* Messages area (hidden scrollbar) */}
         <div

@@ -1,4 +1,3 @@
-// Sidebar.jsx
 import React, { useState } from "react";
 import { FaSearch, FaUsers } from "react-icons/fa";
 import UserList from "../layout/Userlist";

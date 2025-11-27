@@ -1,6 +1,6 @@
 import express from 'express';
 import isAuthenticated from '../Middlewares/isAuthenticated.js';
-import { addMemberController, createGroupController, deleteGroupController, getUserGroupsController, removeMemberController, sendGroupMessageController } from '../controllers/group.controller.js';
+import { addMemberController, createGroupController, deleteGroupController, getGroupMessagesController, getUserGroupsController, removeMemberController, sendGroupMessageController } from '../controllers/group.controller.js';
 
 const groupRouter = express.Router();
 
@@ -21,5 +21,8 @@ groupRouter.get('/get-Groups', isAuthenticated, getUserGroupsController);
 
 //Send Group Message
 groupRouter.post("/send/:groupId", isAuthenticated, sendGroupMessageController);
+
+// Get Group Messages
+groupRouter.get("/getMessage/:groupId", isAuthenticated, getGroupMessagesController);
 
 export default groupRouter;

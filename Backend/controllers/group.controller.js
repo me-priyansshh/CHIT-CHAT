@@ -220,65 +220,82 @@ export const getUserGroupsController = async (req, res) => {
 //Send Group Message
 export const sendGroupMessageController = async (req, res) => {
   try {
-    console.log("---- GROUP MESSAGE DEBUG ----");
 
     const senderId = req.userId;
     const groupId = req.params.groupId;
     const { message } = req.body;
 
-    console.log("senderId:", senderId);
-    console.log("groupId:", groupId);
-    console.log("message body:", message);
-
     if (!message) {
-      console.log("❌ No message text");
       return res.status(400).json({ message: "Message text required" });
     }
 
     const group = await Group.findById(groupId);
-    console.log("group found:", group ? true : false);
 
     if (!group) {
       console.log("❌ Group not found");
       return res.status(404).json({ message: "Group not found" });
     }
 
-    // Create message
     const newMessage = await Message.create({
       senderId,
       groupId,
       message,
     });
 
-    console.log("message created:", newMessage._id);
-
-    // Push to group
-    if (!Array.isArray(group.latestMessages)) {
-      console.log("⚠ latestMessages not array — resetting");
-      group.latestMessages = [];
+    if (!Array.isArray(group.latestMessage)) {
+      group.latestMessage = [];
     }
 
-    group.latestMessages.push(newMessage._id);
+    group.latestMessage.push(newMessage._id);
     await group.save();
     console.log("group saved successfully");
 
     // Emit
-    console.log("emitting socket event...");
     io.to(groupId).emit("receiveGroupMessage", {
       groupId,
       newMessage,
     });
 
-    console.log("socket emit success");
-
     return res.status(200).json({
       message: "Group message sent",
       newMessage,
     });
+    
   } catch (error) {
     console.log("❌ FINAL ERROR:", error);
     res.status(500).json({
       message: "Error sending group message",
+      error: error.message,
+    });
+  }
+};            
+
+export const getGroupMessagesController = async (req, res) => {
+  try {
+    const groupId = req.params.groupId;
+
+    const group = await Group.findById(groupId)
+      .populate("members", "fullName userName profilePic gender _id")
+      .populate("groupAdmin", "fullName userName profilePic gender _id")
+      .populate({
+        path: "latestMessage",
+        populate: { path: "senderId", select: "fullName profilePic _id" }
+      });
+
+    if (!group) {
+      return res.status(404).json({
+        message: "Group not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Group messages fetched successfully",
+      messages: group.latestMessage,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: "Error in Get Group Messages Controller",
       error: error.message,
     });
   }

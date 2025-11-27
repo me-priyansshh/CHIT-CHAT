@@ -9,7 +9,6 @@ const useGetGroups = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // Always send cookies (token) with every request
         axios.defaults.withCredentials = true;
 
         const res = await axios.get(

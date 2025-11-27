@@ -13,7 +13,7 @@ const useGetMessage = () => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      if (!selectedUser?._id) return; // prevent null reading
+      if (!selectedUser?._id) return;
 
       try {
         axios.defaults.withCredentials = true;
@@ -28,7 +28,7 @@ const useGetMessage = () => {
     };
 
     fetchMessages();
-  }, [selectedUser]); // run every time user changes
+  }, [selectedUser?._id]); // run every time user changes
 };
 
 export default useGetMessage;

@@ -9,12 +9,14 @@ import { setgroups } from "../../Redux/groupsSlice";
 import { setMessages } from "../../Redux/messageSlice";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const UserList = () => {
   useGetUsers();
   useGetGroups();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { otherUsers, onlineUsers } = useSelector((store) => store.user);
   const { groups } = useSelector((store) => store.groups);
 
@@ -55,6 +57,7 @@ const UserList = () => {
       <div
   className="flex items-center gap-3 p-4 rounded-xl bg-black-900 font-bold text-lg shadow-md
              cursor-pointer  duration-300 hover:bg-gray-900 text-blue-400"
+             onClick={() => navigate("/ai")}
 >
   {/* Robot Avatar */}
   <img
